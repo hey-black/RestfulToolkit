@@ -1,6 +1,5 @@
 package com.zhaow.restful.navigator;
 
-
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.java.JavaLanguage;
 import com.intellij.openapi.diagnostic.Logger;
@@ -206,8 +205,8 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         List<ProjectNode> projectNodes  = new ArrayList<>();
         protected RootNode() {
             super(null);
-            getTemplatePresentation().setIcon(AllIcons.Actions.Module);
-            setIcon(AllIcons.Actions.Module); //兼容 IDEA 2016
+            getTemplatePresentation().setIcon(AllIcons.Nodes.Module);
+            setIcon(AllIcons.Nodes.Module); //兼容 IDEA 2016
         }
 
         @Override
