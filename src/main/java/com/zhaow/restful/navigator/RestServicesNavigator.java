@@ -1,6 +1,5 @@
 package com.zhaow.restful.navigator;
 
-
 import com.intellij.ide.util.treeView.TreeState;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
@@ -40,14 +39,13 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
     RestServicesNavigatorState myState = new RestServicesNavigatorState();
 
     private SimpleTree myTree;
-//    private JTree myTree;
     protected RestServiceStructure myStructure;
     private ToolWindowEx myToolWindow;
     private AnActionEvent anActionEvent;
 
     private RestServiceProjectsManager myProjectsManager;
 
-    public RestServicesNavigator(Project myProject,RestServiceProjectsManager projectsManager) {
+    public RestServicesNavigator(Project myProject, RestServiceProjectsManager projectsManager) {
         this.myProject = myProject;
         myProjectsManager = projectsManager;
     }
@@ -58,10 +56,8 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
     }
 
 
-
     private void initTree() {
         myTree = new SimpleTree() {
-
 
             @Override
             protected void paintComponent(Graphics g) {
@@ -73,7 +69,6 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
                 if (myProject.isInitialized()) {
                     return;
                 }
-//                if (myProjectsManager.hasProjects()) return;
 
                 myLabel.setFont(getFont());
                 myLabel.setBackground(getBackground());
@@ -86,8 +81,7 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
                 Graphics g2 = g.create(bounds.x + x, bounds.y + 20, bounds.width, bounds.height);
                 try {
                     myLabel.paint(g2);
-                }
-                finally {
+                } finally {
                     g2.dispose();
                 }
             }
@@ -100,7 +94,6 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
     @Override
     public void initComponent() {
         listenForProjectsChanges();
-//        ToolkitUtil.runWhenInitialized(myProject, (DumbAwareRunnable)() -> {
         ToolkitUtil.runWhenInitialized(myProject, () -> {
             if (myProject.isDisposed()) {
                 return;
@@ -116,12 +109,14 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
     private void initToolWindow() {
 
         final ToolWindowManagerEx manager = ToolWindowManagerEx.getInstanceEx(myProject);
-        myToolWindow = (ToolWindowEx)manager.getToolWindow(TOOL_WINDOW_ID);
-        if(myToolWindow != null) {return;}
+        myToolWindow = (ToolWindowEx) manager.getToolWindow(TOOL_WINDOW_ID);
+        if (myToolWindow != null) {
+            return;
+        }
 
         initTree();
 
-        myToolWindow = (ToolWindowEx)manager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.RIGHT, myProject, true);
+        myToolWindow = (ToolWindowEx) manager.registerToolWindow(TOOL_WINDOW_ID, false, ToolWindowAnchor.RIGHT, myProject, true);
         myToolWindow.setIcon(ToolkitIcons.SERVICE);
 
         JPanel panel = new RestServicesNavigatorPanel(myProject, myTree);
@@ -148,17 +143,6 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
             }
         };
         manager.addToolWindowManagerListener(listener, myProject);
-
-        //todo: 扩展 toolWindows 右键
-/*        ActionManager actionManager = ActionManager.getInstance();
-        DefaultActionGroup group = new DefaultActionGroup();
-        group.add(actionManager.getAction("Maven.GroupProjects"));
-        group.add(actionManager.getAction("Maven.ShowIgnored"));
-        group.add(actionManager.getAction("Maven.ShowBasicPhasesOnly"));
-        group.add(actionManager.getAction("Maven.AlwaysShowArtifactId")); // 默认显示 app serviceName
-        group.add(actionManager.getAction("Maven.ShowVersions")); //
-        myToolWindow.setAdditionalGearActions(group);*/
-
     }
 
 
@@ -166,14 +150,13 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
         scheduleStructureRequest(() -> myStructure.update(anActionEvent));
 
     }
+
     private void scheduleStructureRequest(final Runnable r) {
 
         if (myToolWindow == null) {
             return;
         }
 
-//        ToolkitUtil.invokeLater(myProject, () -> {
-//        ToolkitUtil.runWhenInitialized(myProject, () -> {
         ToolkitUtil.runWhenProjectIsReady(myProject, () -> {
             if (!myToolWindow.isVisible()) {
                 return;
@@ -185,23 +168,12 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
             }
 
             r.run();
-// fixme: compat
-//            if (shouldCreate) {
-//                TreeState.createFrom(myState.treeState).applyTo(myTree);
-//            }
-        });
 
-        //        if (isUnitTestMode()) {
-/*        if (myProject.isInitialized()  *//* myProject.isDisposed() *//*) {
-            if (myStructure != null) {
-                r.run();
-            }
-            return;
-        }*/
+        });
     }
 
     private void initStructure() {
-        myStructure = new RestServiceStructure(myProject,myProjectsManager,myTree);
+        myStructure = new RestServiceStructure(myProject, myProjectsManager, myTree);
 
     }
 
@@ -218,8 +190,7 @@ public class RestServicesNavigator implements PersistentStateComponent<RestServi
             try {
                 myState.treeState = new Element("root");
                 TreeState.createOn(myTree).writeExternal(myState.treeState);
-            }
-            catch (WriteExternalException e) {
+            } catch (WriteExternalException e) {
                 LOG.warn(e);
             }
         }

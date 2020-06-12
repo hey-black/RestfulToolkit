@@ -31,54 +31,43 @@ import java.util.List;
 
 @State(name = "RestServiceProjectsManager")
 public class RestServiceProjectsManager implements PersistentStateComponent<RestServicesNavigatorState>, Disposable, ProjectComponent {
-  protected final Project myProject;
-  private AnAction anAction;
+    protected final Project myProject;
+    private AnAction anAction;
+    private RestServicesNavigatorState myState = new RestServicesNavigatorState();
 
-
-
-  private RestServicesNavigatorState myState = new RestServicesNavigatorState();
-
-  public static RestServiceProjectsManager getInstance(Project p) {
-    return p.getComponent(RestServiceProjectsManager.class);
-  }
-
-  public RestServiceProjectsManager(Project project) {
-      myProject = project;
-//    System.out.println("RestServiceProjectsManager");
-  }
-
-
-  @Override
-  public void dispose() {
-
-  }
-
-  @Nullable
-  @Override
-  public RestServicesNavigatorState getState() {
-    return null;
-  }
-
-  @Override
-  public void loadState(RestServicesNavigatorState state) {
-
-  }
-
-  public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
-//    List<RestServiceProject> list = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> ServiceHelper.buildRestServiceProjectList(myProject));
-    List<RestServiceProject> list = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent));
-    return list;
-  }
-/*
-  public boolean hasProjects() {
-    if (! myProject.isInitialized()) {
-      return false;
+    public static RestServiceProjectsManager getInstance(Project p) {
+        return p.getComponent(RestServiceProjectsManager.class);
     }
-    System.out.println("======hasProjects=====");
-    return getServiceProjects().size() > 0;
-  }*/
 
-  public void forceUpdateAllProjects(AnAction anAction) {
-    this.anAction = anAction;
-  }
+    public RestServiceProjectsManager(Project project) {
+        myProject = project;
+//    System.out.println("RestServiceProjectsManager");
+    }
+
+
+    @Override
+    public void dispose() {
+
+    }
+
+    @Nullable
+    @Override
+    public RestServicesNavigatorState getState() {
+        return null;
+    }
+
+    @Override
+    public void loadState(RestServicesNavigatorState state) {
+
+    }
+
+    public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
+        return DumbService.getInstance(myProject).runReadActionInSmartMode(() ->
+                ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent));
+    }
+
+
+    public void forceUpdateAllProjects(AnAction anAction) {
+        this.anAction = anAction;
+    }
 }

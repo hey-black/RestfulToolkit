@@ -19,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseServiceResolver implements ServiceResolver{
+public abstract class BaseServiceResolver implements ServiceResolver {
     Module myModule;
     Project myProject;
     AnActionEvent anActionEvent;
@@ -31,68 +31,60 @@ public abstract class BaseServiceResolver implements ServiceResolver{
             return itemList;
         }
 
-        GlobalSearchScope globalSearchScope = GlobalSearchScope.moduleScope(myModule);
-/*
-
-        List<PsiMethod> psiMethodList = this.getServicePsiMethodList(myModule.getProject(), globalSearchScope);
-
-        //  尴尬了，PsiMethod 不能直接获取到 Module，暂时通过传参的方式
-        psiMethodList.forEach(psiMethod -> {
-            List<RestServiceItem> serviceItemList = getServiceItemList(psiMethod);
-            itemList.addAll(serviceItemList);
-        });
-*/
-
-        //globalSearchScope = GlobalSearchScope.projectScope(myProject);
-
-        //globalSearchScope = GlobalSearchScope.allScope(myModule.getProject());
-        //itemList = getRestServiceItemList(myModule.getProject(), globalSearchScope);
-
         itemList = findAllSupportedServiceItemsInProject();
         return itemList;
     }
 
-
-    public abstract List<RestServiceItem> getRestServiceItemList(Project project, GlobalSearchScope globalSearchScope) ;
+    public abstract List<RestServiceItem> getRestServiceItemList(Project project, GlobalSearchScope globalSearchScope);
 
     @Override
     public List<RestServiceItem> findAllSupportedServiceItemsInProject() {
         List<RestServiceItem> itemList = null;
-        if(myProject == null && myModule != null){
+        if (myProject == null && myModule != null) {
             myProject = myModule.getProject();
         }
 
-        if (anActionEvent == null) { return  new ArrayList<>(); }
+        if (anActionEvent == null) {
+            return new ArrayList<>();
+        }
 
 
         final IdeView view = anActionEvent.getData(LangDataKeys.IDE_VIEW);
 
-        if (view == null) { return  new ArrayList<>(); }
+        if (view == null) {
+            return new ArrayList<>();
+        }
 
         PsiDirectory directory = view.getOrChooseDirectory();
 
         List<PsiClass> allClasses = new ArrayList<>();
-        if ( directory != null ) {
-            allClasses.addAll( FileUtils.getJavaFilesFromDir(anActionEvent.getProject(), directory) );
+        if (directory != null) {
+            allClasses.addAll(FileUtils.getJavaFilesFromDir(directory));
         }
 
         itemList = new ArrayList<>();
-       for (PsiClass psiClass : allClasses) {
+        for (PsiClass psiClass : allClasses) {
             itemList.addAll(Convertor.getServiceItemList(psiClass));
         }
 
-            return itemList;
+        return itemList;
 
     }
 
     @NotNull
     protected RestServiceItem createRestServiceItem(PsiElement psiMethod, String classUriPath, RequestPath requestMapping) {
-        if (!classUriPath.startsWith("/")) classUriPath = "/".concat(classUriPath);
-        if (!classUriPath.endsWith("/")) classUriPath = classUriPath.concat("/");
+        if (!classUriPath.startsWith("/")) {
+            classUriPath = "/".concat(classUriPath);
+        }
+        if (!classUriPath.endsWith("/")) {
+            classUriPath = classUriPath.concat("/");
+        }
 
         String methodPath = requestMapping.getPath();
 
-        if (methodPath.startsWith("/")) methodPath = methodPath.substring(1, methodPath.length());
+        if (methodPath.startsWith("/")) {
+            methodPath = methodPath.substring(1, methodPath.length());
+        }
         String requestPath = classUriPath + methodPath;
 
         RestServiceItem item = new RestServiceItem(psiMethod, requestMapping.getMethod(), requestPath);
@@ -102,8 +94,4 @@ public abstract class BaseServiceResolver implements ServiceResolver{
         return item;
     }
 
-/*
-    protected abstract List<RestServiceItem> getServiceItemList(PsiMethod psiMethod);
-
-    protected abstract List<PsiMethod> getServicePsiMethodList(Project myProject, GlobalSearchScope globalSearchScope);*/
 }

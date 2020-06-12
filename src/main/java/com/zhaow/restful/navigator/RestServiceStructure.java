@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RestServiceStructure  extends SimpleTreeStructure {
+public class RestServiceStructure extends SimpleTreeStructure {
     public static final Logger LOG = Logger.getInstance(RestServiceStructure.class);
 
     private SimpleTreeBuilder myTreeBuilder;
@@ -40,13 +40,13 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     private SimpleTree myTree;
 
     private final Project myProject;
-    private  RootNode myRoot = new RootNode();
+    private RootNode myRoot = new RootNode();
     private int serviceCount = 0;
     private AnActionEvent anActionEvent;
 
     private final RestServiceProjectsManager myProjectsManager;
 
-    RestServiceDetail myRestServiceDetail ;
+    RestServiceDetail myRestServiceDetail;
 
     private final Map<RestServiceProject, ProjectNode> myProjectToNodeMapping = new THashMap<>();
 
@@ -60,13 +60,11 @@ public class RestServiceStructure  extends SimpleTreeStructure {
 
         configureTree(tree);
 
-        myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel)tree.getModel(), this, null);
+        myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel) tree.getModel(), this, null);
         Disposer.register(myProject, myTreeBuilder);
 
         myTreeBuilder.initRoot();
         myTreeBuilder.expand(myRoot, null);
-
-
     }
 
     private void configureTree(SimpleTree tree) {
@@ -80,51 +78,21 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     }
 
     public void update(AnActionEvent event) {
-//        myTreeBuilder.setClearOnHideDelay(4);
-//        myTreeBuilder.cleanUp();
-//        myTreeBuilder.initRoot();
-//        myTreeBuilder.expand(myRoot, null);
-        // rest service controller
-/*
-        SimpleTree tree1 = new SimpleTree();
-        myRoot = new RootNode();
-        myTreeBuilder = new SimpleTreeBuilder(tree1, (DefaultTreeModel)tree1.getModel(), this, null);
-        Disposer.register(myProject, myTreeBuilder);
-
-        myTreeBuilder.initRoot();
-        myTreeBuilder.expand(myRoot, null);*/
-//        List<RestServiceProject> projects = myProjectsManager.getProjects();
-//        List<RestServiceProject> projects = RestServiceProjectsManager.getInstance(myProject).getProjects();
-/*        if (!ModalityState.current().equals(ModalityState.any()) && myProject.isInitialized()) {
-            PsiDocumentManager.getInstance(myProject).commitAllDocuments();
-        }*/
-
         List<RestServiceProject> projects = RestServiceProjectsManager.getInstance(myProject).getServiceProjects(event);
-
-
-
-//        Set<RestServiceProject> deleted = new HashSet<>(myProjectToNodeMapping.keySet());
-//        deleted.removeAll(projects);
         updateProjects(projects);
     }
 
     public void updateProjects(List<RestServiceProject> projects) {
         serviceCount = 0;
-//        DefaultMutableTreeNode rootTreeNode = createTreeNode("REST Services");
-//        myTreeBuilder.addSubtreeToUpdate(rootTreeNode);
 
         for (RestServiceProject each : projects) {
             serviceCount += each.serviceItems.size();
             ProjectNode node = findNodeFor(each);
             if (node == null) {
-                node = new ProjectNode(myRoot,each);
+                node = new ProjectNode(myRoot, each);
                 myProjectToNodeMapping.put(each, node);
             }
         }
-        //myTreeBuilder.
-        //myTreeBuilder.getUi().doUpdateFromRoot();
-//        ((CachingSimpleNode) myRoot.getParent()).cleanUpCache();
-//        myRoot.childrenChanged();
         myRoot.updateProjectNodes(projects);
     }
 
@@ -133,16 +101,14 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     }
 
     public void updateFrom(SimpleNode node) {
-        myTreeBuilder.addSubtreeToUpdateByElement(node);
+        if (node != null) {
+            myTreeBuilder.addSubtreeToUpdateByElement(node);
+        }
     }
 
     private void updateUpTo(SimpleNode node) {
         SimpleNode each = node;
         while (each != null) {
-            SimpleNode parent = each.getParent();
-            /*if (parent != null) {
-                ((BaseSimpleNode)parent).cleanUpCache();
-            }*/
             updateFrom(each);
             each = each.getParent();
         }
@@ -155,8 +121,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
                 filtered.clear();
                 break;
             }
-            //noinspection unchecked
-            filtered.add((T)node);
+            filtered.add((T) node);
         }
         return filtered;
     }
@@ -173,7 +138,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     }
 
 
-    public abstract class BaseSimpleNode extends CachingSimpleNode{
+    public abstract class BaseSimpleNode extends CachingSimpleNode {
 
         protected BaseSimpleNode(SimpleNode aParent) {
             super(aParent);
@@ -200,7 +165,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
             BaseSimpleNode each = this;
             while (each != null) {
                 each.cleanUpCache();
-                each = (BaseSimpleNode)each.getParent();
+                each = (BaseSimpleNode) each.getParent();
             }
             updateUpTo(this);
         }
@@ -209,7 +174,8 @@ public class RestServiceStructure  extends SimpleTreeStructure {
 
 
     public class RootNode extends BaseSimpleNode {
-        List<ProjectNode> projectNodes  = new ArrayList<>();
+        List<ProjectNode> projectNodes = new ArrayList<>();
+
         protected RootNode() {
             super(null);
             getTemplatePresentation().setIcon(AllIcons.Nodes.Module);
@@ -224,34 +190,24 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         @Override
         public String getName() {
             String s = "Found %d services ";// in {controllerCount} Controllers";
-            return serviceCount > 0 ? String.format(s,serviceCount) : null;
+            return serviceCount > 0 ? String.format(s, serviceCount) : null;
         }
 
         @Override
         public void handleSelection(SimpleTree tree) {
-//            System.out.println("ProjectNode handleSelection");
             resetRestServiceDetail();
 
         }
 
         public void updateProjectNodes(List<RestServiceProject> projects) {
-//            cleanUpCache();
             projectNodes.clear();
             for (RestServiceProject project : projects) {
-                ProjectNode projectNode = new ProjectNode(this,project);
+                ProjectNode projectNode = new ProjectNode(this, project);
                 projectNodes.add(projectNode);
             }
 
-//                projectNode.updateServiceNodes();
-
-            /*SimpleNode parent = getParent();
-            if (parent != null) {
-                ((BaseSimpleNode)parent).cleanUpCache();
-            }*/
             updateFrom(getParent());
             childrenChanged();
-//            updateUpTo(this);
-
         }
 
     }
@@ -261,8 +217,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         RestServiceProject myProject;
 
 
-        public ProjectNode(SimpleNode parent,/*,List<RestServiceItem> serviceItems*/RestServiceProject project) {
-//            super(parent);
+        public ProjectNode(SimpleNode parent, RestServiceProject project) {
             super(parent);
             myProject = project;
 
@@ -275,19 +230,14 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         private void updateServiceNodes(List<RestServiceItem> serviceItems) {
             serviceNodes.clear();
             for (RestServiceItem serviceItem : serviceItems) {
-                serviceNodes.add(new ServiceNode(this,serviceItem));
+                serviceNodes.add(new ServiceNode(this, serviceItem));
             }
-           /* for (int i = 0; i < 4; i++) {
-                serviceNodes.add(new ServiceNode(this));
-            }*/
 
             SimpleNode parent = getParent();
             if (parent != null) {
-                ((BaseSimpleNode)parent).cleanUpCache();
+                ((BaseSimpleNode) parent).cleanUpCache();
             }
             updateFrom(parent);
-//            childrenChanged();
-//            updateUpTo(this);
         }
 
         @Override
@@ -307,22 +257,14 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         protected String getActionId() {
             return "Toolkit.RefreshServices";
         }
-/*
-        @Override
-        @Nullable
-        @NonNls
-        protected String getMenuId() {
-            return "Toolkit.ReimportServices";
-        }*/
 
         @Override
         public void handleSelection(SimpleTree tree) {
-//            System.out.println("ProjectNode handleSelection");
             resetRestServiceDetail();
         }
+
         @Override
         public void handleDoubleClickOrEnter(SimpleTree tree, InputEvent inputEvent) {
-//            System.out.println("ProjectNode handleDoubleClickOrEnter");
         }
     }
 
@@ -348,9 +290,6 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         @Override
         public String getName() {
             String name = myServiceItem.getName();
-/*            if (ToolkitIcons.METHOD.get(myServiceItem.getMethod()) == null && myServiceItem.getMethod() != null) {
-                name += " [" + myServiceItem.getMethod() + "]";
-            }*/
             return name;
         }
 
@@ -362,29 +301,29 @@ public class RestServiceStructure  extends SimpleTreeStructure {
 
         /**
          * 显示服务详情，url
-         * */
+         */
         private void showServiceDetail(RestServiceItem serviceItem) {
 
             myRestServiceDetail.resetRequestTabbedPane();
 
-            String method = serviceItem.getMethod()!=null? String.valueOf(serviceItem.getMethod()) : HttpMethod.GET.name();
+            String method = serviceItem.getMethod() != null ? String.valueOf(serviceItem.getMethod()) : HttpMethod.GET.name();
             myRestServiceDetail.setMethodValue(method);
             myRestServiceDetail.setUrlValue(serviceItem.getFullUrl());
 
             String requestParams = "";
             String requestBodyJson = "";
             PsiElement psiElement = serviceItem.getPsiElement();
-            if (psiElement.getLanguage()== JavaLanguage.INSTANCE) {
+            if (psiElement.getLanguage() == JavaLanguage.INSTANCE) {
                 PsiMethodHelper psiMethodHelper = PsiMethodHelper.create(serviceItem.getPsiMethod()).withModule(serviceItem.getModule());
                 requestParams = psiMethodHelper.buildParamString();
                 requestBodyJson = psiMethodHelper.buildRequestBodyJson();
 
-            }else if(psiElement.getLanguage()== KotlinLanguage.INSTANCE){
+            } else if (psiElement.getLanguage() == KotlinLanguage.INSTANCE) {
                 if (psiElement instanceof KtNamedFunction) {
                     KtNamedFunction ktNamedFunction = (KtNamedFunction) psiElement;
                     KtFunctionHelper ktFunctionHelper = KtFunctionHelper.create(ktNamedFunction).withModule(serviceItem.getModule());
                     requestParams = ktFunctionHelper.buildParamString();
-                    requestBodyJson =ktFunctionHelper.buildRequestBodyJson();
+                    requestBodyJson = ktFunctionHelper.buildRequestBodyJson();
                 }
 
             }
@@ -412,11 +351,11 @@ public class RestServiceStructure  extends SimpleTreeStructure {
                 RestServicesNavigator.getInstance(myServiceItem.getModule().getProject()).scheduleStructureUpdate();
             }
 
-            if (psiElement.getLanguage()== JavaLanguage.INSTANCE) {
+            if (psiElement.getLanguage() == JavaLanguage.INSTANCE) {
                 PsiMethod psiMethod = myServiceItem.getPsiMethod();
                 OpenSourceUtil.navigate(psiMethod);
 
-            }else if(psiElement.getLanguage()== KotlinLanguage.INSTANCE){
+            } else if (psiElement.getLanguage() == KotlinLanguage.INSTANCE) {
                 if (psiElement instanceof KtNamedFunction) {
                     KtNamedFunction ktNamedFunction = (KtNamedFunction) psiElement;
                     OpenSourceUtil.navigate(ktNamedFunction);
@@ -430,14 +369,6 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         protected String getMenuId() {
             return "Toolkit.NavigatorServiceMenu";
         }
-
-/*
-        @Override
-        @Nullable
-        @NonNls
-        protected String getActionId() {
-            return "Toolkit.Navigator";
-        }*/
 
     }
 
