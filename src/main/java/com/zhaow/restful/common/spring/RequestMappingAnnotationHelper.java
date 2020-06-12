@@ -80,18 +80,7 @@ public class RequestMappingAnnotationHelper implements RestSupportedAnnotationHe
     private static List<RequestPath> getRequestMappings(PsiAnnotation annotation, String defaultValue) {
         List<RequestPath> mappingList = new ArrayList<>();
 
-        SpringRequestMethodAnnotation requestAnnotation = SpringRequestMethodAnnotation.getByQualifiedName(annotation.getQualifiedName());
-
-        if (requestAnnotation==null) {
-            return new ArrayList<>();
-        }
-
-        List<String> methodList ;
-        if (requestAnnotation.methodName() != null) {
-            methodList = Arrays.asList(requestAnnotation.methodName()) ;
-        } else { // RequestMapping 如果没有指定具体method，不写的话，默认支持所有HTTP请求方法
-            methodList = PsiAnnotationHelper.getAnnotationAttributeValues(annotation, "method");
-        }
+        List<String> methodList = PsiAnnotationHelper.getAnnotationAttributeValues(annotation, "method");
 
         List<String> pathList = PsiAnnotationHelper.getAnnotationAttributeValues(annotation, "value");
         if (pathList.size() == 0) {
@@ -137,7 +126,7 @@ public class RequestMappingAnnotationHelper implements RestSupportedAnnotationHe
         for (PsiAnnotation annotation : annotations) {
             for (SpringRequestMethodAnnotation mappingAnnotation : SpringRequestMethodAnnotation.values()) {
 //            for (PathMappingAnnotation mappingAnnotation : PathMappingAnnotation.allPathMappingAnnotations) {
-                if (mappingAnnotation.getQualifiedName().equals(annotation.getQualifiedName())) {
+                if (mappingAnnotation.getQualifiedName().endsWith(annotation.getQualifiedName())) {
 
 //                    String defaultValue = psiMethod.getName();
                     String defaultValue = "/";

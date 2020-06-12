@@ -16,6 +16,8 @@
 package com.zhaow.restful.navigator;
 
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
@@ -28,9 +30,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @State(name = "RestServiceProjectsManager")
-public class RestServiceProjectsManager extends AbstractProjectComponent
-  implements PersistentStateComponent<RestServicesNavigatorState>, Disposable, ProjectComponent {
+public class RestServiceProjectsManager implements PersistentStateComponent<RestServicesNavigatorState>, Disposable, ProjectComponent {
   protected final Project myProject;
+  private AnAction anAction;
 
 
 
@@ -41,7 +43,6 @@ public class RestServiceProjectsManager extends AbstractProjectComponent
   }
 
   public RestServiceProjectsManager(Project project) {
-      super(project);
       myProject = project;
 //    System.out.println("RestServiceProjectsManager");
   }
@@ -63,9 +64,9 @@ public class RestServiceProjectsManager extends AbstractProjectComponent
 
   }
 
-  public List<RestServiceProject> getServiceProjects() {
+  public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
 //    List<RestServiceProject> list = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> ServiceHelper.buildRestServiceProjectList(myProject));
-    List<RestServiceProject> list = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> ServiceHelper.buildRestServiceProjectListUsingResolver(myProject));
+    List<RestServiceProject> list = DumbService.getInstance(myProject).runReadActionInSmartMode(() -> ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent));
     return list;
   }
 /*
@@ -77,7 +78,7 @@ public class RestServiceProjectsManager extends AbstractProjectComponent
     return getServiceProjects().size() > 0;
   }*/
 
-  public void forceUpdateAllProjects() {
-
+  public void forceUpdateAllProjects(AnAction anAction) {
+    this.anAction = anAction;
   }
 }

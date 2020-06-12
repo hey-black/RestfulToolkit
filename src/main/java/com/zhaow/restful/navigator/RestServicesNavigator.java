@@ -2,6 +2,7 @@ package com.zhaow.restful.navigator;
 
 
 import com.intellij.ide.util.treeView.TreeState;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.*;
 import com.intellij.openapi.diagnostic.Logger;
@@ -27,7 +28,7 @@ import java.awt.*;
 import java.net.URL;
 
 @State(name = "RestServicesNavigator", storages = {@Storage(StoragePathMacros.WORKSPACE_FILE)})
-public class RestServicesNavigator extends AbstractProjectComponent implements PersistentStateComponent<RestServicesNavigatorState>, ProjectComponent {
+public class RestServicesNavigator implements PersistentStateComponent<RestServicesNavigatorState>, ProjectComponent {
     public static final Logger LOG = Logger.getInstance(RestServicesNavigator.class);
 
     public static final String TOOL_WINDOW_ID = "RestServices";
@@ -42,11 +43,11 @@ public class RestServicesNavigator extends AbstractProjectComponent implements P
 //    private JTree myTree;
     protected RestServiceStructure myStructure;
     private ToolWindowEx myToolWindow;
+    private AnActionEvent anActionEvent;
 
     private RestServiceProjectsManager myProjectsManager;
 
     public RestServicesNavigator(Project myProject,RestServiceProjectsManager projectsManager) {
-        super(myProject);
         this.myProject = myProject;
         myProjectsManager = projectsManager;
     }
@@ -101,9 +102,15 @@ public class RestServicesNavigator extends AbstractProjectComponent implements P
         listenForProjectsChanges();
 //        ToolkitUtil.runWhenInitialized(myProject, (DumbAwareRunnable)() -> {
         ToolkitUtil.runWhenInitialized(myProject, () -> {
-            if (myProject.isDisposed()) return;
+            if (myProject.isDisposed()) {
+                return;
+            }
             initToolWindow();
         });
+    }
+
+    public void atachEvent(AnActionEvent anActionEvent) {
+        this.anActionEvent = anActionEvent;
     }
 
     private void initToolWindow() {
@@ -129,7 +136,9 @@ public class RestServicesNavigator extends AbstractProjectComponent implements P
 
             @Override
             public void stateChanged() {
-                if (myToolWindow.isDisposed()) return;
+                if (myToolWindow.isDisposed()) {
+                    return;
+                }
                 boolean visible = myToolWindow.isVisible();
                 if (!visible || wasVisible) {
                     return;
@@ -154,17 +163,21 @@ public class RestServicesNavigator extends AbstractProjectComponent implements P
 
 
     public void scheduleStructureUpdate() {
-        scheduleStructureRequest(() -> myStructure.update());
+        scheduleStructureRequest(() -> myStructure.update(anActionEvent));
 
     }
     private void scheduleStructureRequest(final Runnable r) {
 
-        if (myToolWindow == null) return;
+        if (myToolWindow == null) {
+            return;
+        }
 
 //        ToolkitUtil.invokeLater(myProject, () -> {
 //        ToolkitUtil.runWhenInitialized(myProject, () -> {
         ToolkitUtil.runWhenProjectIsReady(myProject, () -> {
-            if (!myToolWindow.isVisible()) return;
+            if (!myToolWindow.isVisible()) {
+                return;
+            }
 
             boolean shouldCreate = myStructure == null;
             if (shouldCreate) {

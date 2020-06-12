@@ -2,11 +2,14 @@ package com.zhaow.restful.navigator;
 
 import com.intellij.icons.AllIcons;
 import com.intellij.lang.java.JavaLanguage;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiMethod;
+import com.intellij.ui.tree.AsyncTreeModel;
+import com.intellij.ui.tree.StructureTreeModel;
 import com.intellij.ui.treeStructure.*;
 import com.intellij.util.OpenSourceUtil;
 import com.zhaow.restful.common.KtFunctionHelper;
@@ -32,12 +35,14 @@ import java.util.Map;
 public class RestServiceStructure  extends SimpleTreeStructure {
     public static final Logger LOG = Logger.getInstance(RestServiceStructure.class);
 
-    private  SimpleTreeBuilder myTreeBuilder;
+    private StructureTreeModel myTreeBuilder;
+    private AsyncTreeModel asyncTreeModel;
     private SimpleTree myTree;
 
     private final Project myProject;
     private  RootNode myRoot = new RootNode();
     private int serviceCount = 0;
+    private AnActionEvent anActionEvent;
 
     private final RestServiceProjectsManager myProjectsManager;
 
@@ -55,11 +60,13 @@ public class RestServiceStructure  extends SimpleTreeStructure {
 
         configureTree(tree);
 
-        myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel)tree.getModel(), this, null);
+        myTreeBuilder = new StructureTreeModel(this, projectsManager);
+        // asyncTreeModel = new AsyncTreeModel(, projectsManager);
+        // myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel)tree.getModel(), this, null);
         Disposer.register(myProject, myTreeBuilder);
 
-        myTreeBuilder.initRoot();
-        myTreeBuilder.expand(myRoot, null);
+        // myTreeBuilder.initRoot();
+        myTreeBuilder.promiseVisitor(myRoot);
 
     }
 
@@ -73,7 +80,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
         return myRoot;
     }
 
-    public void update() {
+    public void update(AnActionEvent event) {
 //        myTreeBuilder.setClearOnHideDelay(4);
 //        myTreeBuilder.cleanUp();
 //        myTreeBuilder.initRoot();
@@ -93,7 +100,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
             PsiDocumentManager.getInstance(myProject).commitAllDocuments();
         }*/
 
-        List<RestServiceProject> projects = RestServiceProjectsManager.getInstance(myProject).getServiceProjects();
+        List<RestServiceProject> projects = RestServiceProjectsManager.getInstance(myProject).getServiceProjects(event);
 
 
 
@@ -115,7 +122,8 @@ public class RestServiceStructure  extends SimpleTreeStructure {
                 myProjectToNodeMapping.put(each, node);
             }
         }
-        myTreeBuilder.getUi().doUpdateFromRoot();
+        //myTreeBuilder.
+        //myTreeBuilder.getUi().doUpdateFromRoot();
 //        ((CachingSimpleNode) myRoot.getParent()).cleanUpCache();
 //        myRoot.childrenChanged();
         myRoot.updateProjectNodes(projects);
@@ -126,7 +134,10 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     }
 
     public void updateFrom(SimpleNode node) {
-        myTreeBuilder.addSubtreeToUpdateByElement(node);
+        if (node != null) {
+            myTreeBuilder.promiseVisitor(node);
+        }
+        //myTreeBuilder.addSubtreeToUpdateByElement(node);
     }
 
     private void updateUpTo(SimpleNode node) {

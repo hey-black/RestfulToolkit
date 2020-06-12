@@ -1,5 +1,7 @@
 package com.zhaow.restful.common;
 
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
@@ -26,22 +28,23 @@ public class ServiceHelper {
         this.psiMethod = psiMethod;
     }
 
-    public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project) {
+    public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project, AnActionEvent anActionEvent) {
 //        System.out.println("buildRestServiceProjectList");
         List<RestServiceProject> serviceProjectList = new ArrayList<>();
 
-        Module[] modules = ModuleManager.getInstance(project).getModules();
-        for (Module module : modules) {
-            List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(module);
+        //Module[] modules = ModuleManager.getInstance(project).getModules();
+        //for (Module module : modules) {
+
+            List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
             if (restServices.size() > 0) {
-                serviceProjectList.add(new RestServiceProject(module, restServices));
+                serviceProjectList.add(new RestServiceProject(project.getName(), restServices));
             }
-        }
+        //}
 
         return serviceProjectList;
     }
 
-    public static List<RestServiceItem> buildRestServiceItemListUsingResolver(Module module) {
+    public static List<RestServiceItem> buildRestServiceItemListUsingResolver(Module module, AnAction anAction) {
 
         List<RestServiceItem> itemList = new ArrayList<>();
 
@@ -59,10 +62,10 @@ public class ServiceHelper {
     }
 
     @NotNull
-    public static List<RestServiceItem> buildRestServiceItemListUsingResolver(Project project) {
+    public static List<RestServiceItem> buildRestServiceItemListUsingResolver(Project project, AnActionEvent anAction) {
         List<RestServiceItem> itemList = new ArrayList<>();
 
-        SpringResolver springResolver = new SpringResolver(project);
+        SpringResolver springResolver = new SpringResolver(project, anAction);
         JaxrsResolver jaxrsResolver = new JaxrsResolver(project);
 
         ServiceResolver[] resolvers = {springResolver,jaxrsResolver};

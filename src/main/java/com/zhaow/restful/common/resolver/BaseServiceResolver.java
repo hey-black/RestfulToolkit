@@ -1,10 +1,17 @@
 package com.zhaow.restful.common.resolver;
 
 
+import com.intellij.ide.IdeView;
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiClass;
+import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.zhaow.restful.common.FileUtils;
 import com.zhaow.restful.method.RequestPath;
 import com.zhaow.restful.navigation.action.RestServiceItem;
 import org.jetbrains.annotations.NotNull;
@@ -15,6 +22,7 @@ import java.util.List;
 public abstract class BaseServiceResolver implements ServiceResolver{
     Module myModule;
     Project myProject;
+    AnActionEvent anActionEvent;
 
     @Override
     public List<RestServiceItem> findAllSupportedServiceItemsInModule() {
@@ -35,7 +43,12 @@ public abstract class BaseServiceResolver implements ServiceResolver{
         });
 */
 
-        itemList = getRestServiceItemList(myModule.getProject(), globalSearchScope);
+        //globalSearchScope = GlobalSearchScope.projectScope(myProject);
+
+        //globalSearchScope = GlobalSearchScope.allScope(myModule.getProject());
+        //itemList = getRestServiceItemList(myModule.getProject(), globalSearchScope);
+
+        itemList = findAllSupportedServiceItemsInProject();
         return itemList;
     }
 
@@ -49,24 +62,26 @@ public abstract class BaseServiceResolver implements ServiceResolver{
             myProject = myModule.getProject();
         }
 
-        if (myProject == null) {
-            return new ArrayList<>();
+        if (anActionEvent == null) { return  new ArrayList<>(); }
+
+
+        final IdeView view = anActionEvent.getData(LangDataKeys.IDE_VIEW);
+
+        if (view == null) { return  new ArrayList<>(); }
+
+        PsiDirectory directory = view.getOrChooseDirectory();
+
+        List<PsiClass> allClasses = new ArrayList<>();
+        if ( directory != null ) {
+            allClasses.addAll( FileUtils.getJavaFilesFromDir(anActionEvent.getProject(), directory) );
         }
 
-        GlobalSearchScope globalSearchScope = GlobalSearchScope.projectScope(myProject);
+        itemList = new ArrayList<>();
+       for (PsiClass psiClass : allClasses) {
+            itemList.addAll(Convertor.getServiceItemList(psiClass));
+        }
 
-/*        List<PsiMethod> psiMethodList = this.getServicePsiMethodList(myProject, globalSearchScope);
-
-        for (PsiMethod psiMethod : psiMethodList) {
-            List<RestServiceItem> singleMethodServices = getServiceItemList(psiMethod);
-
-            itemList.addAll(singleMethodServices);
-
-        }*/
-
-        itemList = getRestServiceItemList(myProject, globalSearchScope);
-
-        return itemList;
+            return itemList;
 
     }
 

@@ -1,6 +1,8 @@
 package com.zhaow.restful.common.resolver;
 
 
+import com.intellij.openapi.actionSystem.AnAction;
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -32,6 +34,12 @@ public class SpringResolver  extends BaseServiceResolver  {
 
     public SpringResolver(Project project) {
         myProject = project;
+
+    }
+
+    public SpringResolver(Project project, AnActionEvent anAction) {
+        myProject = project;
+        anActionEvent = anAction;
 
     }
 

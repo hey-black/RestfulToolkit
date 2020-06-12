@@ -11,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 public class RefreshProjectAction extends AnAction {
 
   protected void perform(@NotNull RestServiceProjectsManager manager) {
-    manager.forceUpdateAllProjects();
+    manager.forceUpdateAllProjects(this);
   }
 
     @Override
@@ -25,6 +25,7 @@ public class RefreshProjectAction extends AnAction {
       RestServicesNavigator servicesNavigator = RestServicesNavigator.getInstance(project);
 
       servicesNavigator.initComponent();
+      servicesNavigator.atachEvent(e);
       servicesNavigator.scheduleStructureUpdate();
     }
 
