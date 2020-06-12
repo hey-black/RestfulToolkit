@@ -35,7 +35,7 @@ import java.util.Map;
 public class RestServiceStructure  extends SimpleTreeStructure {
     public static final Logger LOG = Logger.getInstance(RestServiceStructure.class);
 
-    private StructureTreeModel myTreeBuilder;
+    private SimpleTreeBuilder myTreeBuilder;
     private AsyncTreeModel asyncTreeModel;
     private SimpleTree myTree;
 
@@ -60,13 +60,12 @@ public class RestServiceStructure  extends SimpleTreeStructure {
 
         configureTree(tree);
 
-        myTreeBuilder = new StructureTreeModel(this, projectsManager);
-        // asyncTreeModel = new AsyncTreeModel(, projectsManager);
-        // myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel)tree.getModel(), this, null);
+        myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel)tree.getModel(), this, null);
         Disposer.register(myProject, myTreeBuilder);
 
-        // myTreeBuilder.initRoot();
-        myTreeBuilder.promiseVisitor(myRoot);
+        myTreeBuilder.initRoot();
+        myTreeBuilder.expand(myRoot, null);
+
 
     }
 
@@ -134,10 +133,7 @@ public class RestServiceStructure  extends SimpleTreeStructure {
     }
 
     public void updateFrom(SimpleNode node) {
-        if (node != null) {
-            myTreeBuilder.promiseVisitor(node);
-        }
-        //myTreeBuilder.addSubtreeToUpdateByElement(node);
+        myTreeBuilder.addSubtreeToUpdateByElement(node);
     }
 
     private void updateUpTo(SimpleNode node) {
