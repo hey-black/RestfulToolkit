@@ -28,8 +28,6 @@ public class Convertor {
             for (RequestPath classRequestPath : classRequestPaths) {
                 for (RequestPath methodRequestPath : methodRequestPaths) {
                     String path =  classRequestPath.getPath();
-//                String path = tryReplacePlaceholderValueInPath( classRequestPath.getPath() );
-
                     RestServiceItem item = createRestServiceItem(psiMethod, path, methodRequestPath);
                     itemList.add(item);
                 }

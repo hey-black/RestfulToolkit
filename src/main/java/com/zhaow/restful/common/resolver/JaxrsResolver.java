@@ -1,6 +1,7 @@
 package com.zhaow.restful.common.resolver;
 
 
+import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
@@ -21,8 +22,9 @@ public class JaxrsResolver extends BaseServiceResolver {
         myModule = module;
     }
 
-    public JaxrsResolver(Project project) {
+    public JaxrsResolver(Project project, AnActionEvent event) {
         myProject = project;
+        anActionEvent = event;
     }
 
     @Override

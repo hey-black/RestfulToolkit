@@ -66,7 +66,7 @@ public class ServiceHelper {
         List<RestServiceItem> itemList = new ArrayList<>();
 
         SpringResolver springResolver = new SpringResolver(project, anAction);
-        JaxrsResolver jaxrsResolver = new JaxrsResolver(project);
+        JaxrsResolver jaxrsResolver = new JaxrsResolver(project, anAction);
 
         ServiceResolver[] resolvers = {springResolver,jaxrsResolver};
         for (ServiceResolver resolver : resolvers) {
