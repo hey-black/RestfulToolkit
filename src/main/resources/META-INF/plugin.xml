@@ -1,6 +1,6 @@
 <idea-plugin url="https://plugins.jetbrains.com/plugin/10292-restfultoolkit" allow-bundled-update="true">
   <id>com.zhaow.restful.toolkit</id>
-  <name>RestfulDevelopmentKit</name>
+  <name>WebDevelopmentKit (WDK)</name>
   <version>3.0.0</version>
   <vendor email="mrmanzhaow@163.com" url="">zhaow</vendor>
 
