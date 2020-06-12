@@ -86,7 +86,7 @@ public class RestServiceStructure extends SimpleTreeStructure {
         serviceCount = 0;
 
         for (RestServiceProject each : projects) {
-            serviceCount += each.serviceItems.size();
+            serviceCount += each.serviceItems.size();   // 计算api个数
             ProjectNode node = findNodeFor(each);
             if (node == null) {
                 node = new ProjectNode(myRoot, each);

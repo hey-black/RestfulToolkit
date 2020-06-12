@@ -27,11 +27,11 @@ public class GotoRequestMappingContributor implements ChooseByNameContributor {
         String[] names = null;
         List<RestServiceItem> itemList;
         ///todo 查找 project 中所有符合 rest url 类型文件，包含 request 接口
-        if (onlyThisModuleChecked && myModule != null) {
-            itemList = ServiceHelper.buildRestServiceItemListUsingResolver(myModule, null);
-        } else {
+        //if (onlyThisModuleChecked && myModule != null) {
+        //    itemList = ServiceHelper.buildRestServiceItemListUsingResolver(myModule, null);
+        //} else {
             itemList = ServiceHelper.buildRestServiceItemListUsingResolver(project, null);
-        }
+        //}
 
         navItem = itemList;
 
