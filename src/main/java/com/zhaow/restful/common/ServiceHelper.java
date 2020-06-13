@@ -1,5 +1,6 @@
 package com.zhaow.restful.common;
 
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -25,7 +26,7 @@ public class ServiceHelper {
         this.psiMethod = psiMethod;
     }
 
-    public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project, AnActionEvent anActionEvent) {
+    public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project, AnActionEvent anActionEvent, Disposable disposable) {
         List<RestServiceProject> serviceProjectList = new ArrayList<>();
         List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
         if (restServices.size() > 0) {

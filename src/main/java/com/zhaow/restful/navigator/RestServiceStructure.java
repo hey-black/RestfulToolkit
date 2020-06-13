@@ -37,6 +37,8 @@ public class RestServiceStructure extends SimpleTreeStructure {
 
     private SimpleTreeBuilder myTreeBuilder;
     private AsyncTreeModel asyncTreeModel;
+    private StructureTreeModel structureTreeModel;
+
     private SimpleTree myTree;
 
     private final Project myProject;
@@ -63,8 +65,12 @@ public class RestServiceStructure extends SimpleTreeStructure {
         myTreeBuilder = new SimpleTreeBuilder(tree, (DefaultTreeModel) tree.getModel(), this, null);
         Disposer.register(myProject, myTreeBuilder);
 
-        myTreeBuilder.initRoot();
-        myTreeBuilder.expand(myRoot, null);
+        //myTreeBuilder.initRoot();
+        //myTreeBuilder.expand(myRoot, null);
+
+        // structureTreeModel = new StructureTreeModel(this, Disposable ?);
+        //asyncTreeModel = new AsyncTreeModel()
+
     }
 
     private void configureTree(SimpleTree tree) {
@@ -78,7 +84,13 @@ public class RestServiceStructure extends SimpleTreeStructure {
     }
 
     public void update(AnActionEvent event) {
-        List<RestServiceProject> projects = RestServiceProjectsManager.getInstance(myProject).getServiceProjects(event);
+        RestServiceProjectsManager restServiceProjectsManager = RestServiceProjectsManager.getInstance(myProject);
+        if (structureTreeModel == null) {
+            structureTreeModel = new StructureTreeModel(this, restServiceProjectsManager);
+
+        }
+
+        List<RestServiceProject> projects = restServiceProjectsManager.getServiceProjects(event);
         updateProjects(projects);
     }
 
@@ -102,6 +114,7 @@ public class RestServiceStructure extends SimpleTreeStructure {
 
     public void updateFrom(SimpleNode node) {
         if (node != null) {
+            //structureTreeModel.expand(node, myTree, );
             myTreeBuilder.addSubtreeToUpdateByElement(node);
         }
     }

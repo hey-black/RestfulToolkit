@@ -1,10 +1,10 @@
-package com.zhaow.restful.common;
+package com.github.aborn.wdt.utils;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.impl.source.PsiJavaFileImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 
