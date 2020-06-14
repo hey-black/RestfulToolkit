@@ -29,15 +29,25 @@ public class JaxrsResolver extends BaseServiceResolver {
 
     @Override
     public List<RestServiceItem> getRestServiceItemList(Project project, GlobalSearchScope globalSearchScope) {
-        List<RestServiceItem> itemList = new ArrayList<>();
-
         Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(JaxrsPathAnnotation.PATH.getShortName(), project, globalSearchScope);
+        return buildRestServiceItemList(psiAnnotations);
+    }
+
+    public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
+        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(JaxrsPathAnnotation.PATH.getShortName(), project, GlobalSearchScope.moduleScope(module));
+        return buildRestServiceItemList(psiAnnotations);
+    }
+
+    public List<RestServiceItem> buildRestServiceItemList(Collection<PsiAnnotation> psiAnnotations) {
+        List<RestServiceItem> itemList = new ArrayList<>();
 
         for (PsiAnnotation psiAnnotation : psiAnnotations) {
             PsiModifierList psiModifierList = (PsiModifierList) psiAnnotation.getParent();
             PsiElement psiElement = psiModifierList.getParent();
 
-            if (!(psiElement instanceof PsiClass)) continue;
+            if (!(psiElement instanceof PsiClass)) {
+                continue;
+            }
 
             PsiClass psiClass = (PsiClass) psiElement;
             PsiMethod[] psiMethods = psiClass.getMethods();

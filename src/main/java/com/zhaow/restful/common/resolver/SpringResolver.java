@@ -6,9 +6,11 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.zhaow.restful.annotations.JaxrsPathAnnotation;
 import com.zhaow.restful.annotations.PathMappingAnnotation;
 import com.zhaow.restful.annotations.SpringControllerAnnotation;
 import com.zhaow.restful.annotations.SpringRequestMethodAnnotation;
+import com.zhaow.restful.common.jaxrs.JaxrsAnnotationHelper;
 import com.zhaow.restful.common.spring.RequestMappingAnnotationHelper;
 import com.zhaow.restful.method.RequestPath;
 import com.zhaow.restful.method.action.PropertiesHandler;
@@ -39,6 +41,45 @@ public class SpringResolver extends BaseServiceResolver {
         myProject = project;
         anActionEvent = anAction;
 
+    }
+
+    public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
+        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(SpringControllerAnnotation.REST_CONTROLLER.getShortName(), project, GlobalSearchScope.moduleScope(module));
+        return buildRestServiceItemList(psiAnnotations);
+    }
+
+    public List<RestServiceItem> buildRestServiceItemList(Collection<PsiAnnotation> psiAnnotations) {
+        List<RestServiceItem> itemList = new ArrayList<>();
+
+        for (PsiAnnotation psiAnnotation : psiAnnotations) {
+            PsiModifierList psiModifierList = (PsiModifierList) psiAnnotation.getParent();
+            PsiElement psiElement = psiModifierList.getParent();
+
+            if (!(psiElement instanceof PsiClass)) {
+                continue;
+            }
+
+            PsiClass psiClass = (PsiClass) psiElement;
+            PsiMethod[] psiMethods = psiClass.getMethods();
+
+            if (psiMethods == null) {
+                continue;
+            }
+
+            String classUriPath = JaxrsAnnotationHelper.getClassUriPath(psiClass);
+
+            for (PsiMethod psiMethod : psiMethods) {
+                RequestPath[] methodUriPaths = JaxrsAnnotationHelper.getRequestPaths(psiMethod);
+
+                for (RequestPath methodUriPath : methodUriPaths) {
+                    RestServiceItem item = createRestServiceItem(psiMethod, classUriPath, methodUriPath);
+                    itemList.add(item);
+                }
+            }
+
+        }
+
+        return itemList;
     }
 
     @Override

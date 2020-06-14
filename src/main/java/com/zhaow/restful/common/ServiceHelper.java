@@ -3,9 +3,14 @@ package com.zhaow.restful.common;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.PsiAnnotation;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.impl.java.stubs.index.JavaAnnotationIndex;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.zhaow.restful.annotations.JaxrsPathAnnotation;
 import com.zhaow.restful.common.resolver.JaxrsResolver;
 import com.zhaow.restful.common.resolver.ServiceResolver;
 import com.zhaow.restful.common.resolver.SpringResolver;
@@ -14,6 +19,7 @@ import com.zhaow.restful.navigator.RestServiceProject;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -29,12 +35,42 @@ public class ServiceHelper {
 
     public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project, AnActionEvent anActionEvent, Disposable disposable) {
         List<RestServiceProject> serviceProjectList = new ArrayList<>();
-        List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
-        if (restServices.size() > 0) {
-            serviceProjectList.add(new RestServiceProject(project.getName(), restServices));
+        Module[] modules = ModuleManager.getInstance(project).getModules();
+        List<RestServiceItem> restServices;
+
+        if (modules.length > 1) {
+            for (Module module : modules) {
+                List<RestServiceItem> moduleList = buildRestServiceItemListUsingResolver(project, module, anActionEvent);
+                if (moduleList.size() > 0) {
+                    serviceProjectList.add(new RestServiceProject(module.getName() + "(" + moduleList.size() +")", moduleList));
+                }
+            }
+        } else {
+            restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
+            if (restServices.size() > 0) {
+                serviceProjectList.add(new RestServiceProject(project.getName(), restServices));
+            }
         }
 
         return serviceProjectList;
+    }
+
+    @NotNull
+    public static List<RestServiceItem> buildRestServiceItemListUsingResolver(Project project, Module module, AnActionEvent anAction) {
+        List<RestServiceItem> itemList = new ArrayList<>();
+
+        SpringResolver springResolver = new SpringResolver(project, anAction);
+        JaxrsResolver jaxrsResolver = new JaxrsResolver(project, anAction);
+
+        //ServiceResolver[] resolvers = {springResolver, jaxrsResolver};
+
+        List<RestServiceItem> javaxPathList = jaxrsResolver.getRestServiceItemList(project, module);
+        itemList.addAll(javaxPathList);
+
+        List<RestServiceItem> springList = springResolver.getRestServiceItemList(project, module);
+        itemList.addAll(springList);
+
+        return itemList;
     }
 
     @NotNull
