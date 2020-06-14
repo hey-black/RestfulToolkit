@@ -36,7 +36,7 @@ public class ToolkitIcons {
         // OPTIONS HEAD
     }
 
-    public static final Icon MODULE = AllIcons.Modules.ModulesNode; // 16x16
+    public static final Icon MODULE = AllIcons.Nodes.ModuleGroup; // 16x16
     public static final Icon Refresh = AllIcons.Actions.Refresh; // 16x16
 //    public static final Icon SERVICE = IconLoader.getIcon("/icons/service.png"); // 16x16
 

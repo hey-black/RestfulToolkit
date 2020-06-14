@@ -4,7 +4,6 @@ import com.intellij.featureStatistics.ApplicabilityFilter;
 import com.intellij.featureStatistics.FeatureDescriptor;
 import com.intellij.featureStatistics.GroupDescriptor;
 import com.intellij.featureStatistics.ProductivityFeaturesProvider;
-import com.intellij.remoteServer.util.CloudBundle;
 
 import java.util.Collections;
 
@@ -17,7 +16,7 @@ public class RestfulToolkitFeaturesProvider extends ProductivityFeaturesProvider
     return new FeatureDescriptor[]{new FeatureDescriptor(UPLOAD_SSH_KEY_FEATURE_ID,
                                                          CLOUDS_GROUP_ID,
                                                          "UploadSshKey.html",
-                                                         CloudBundle.getText("upload.ssh.key.display.name"),
+                                                         "upload.ssh.key.display.name",
                                                          0,
                                                          0,
                                                          Collections.<String>emptySet(),
@@ -29,7 +28,7 @@ public class RestfulToolkitFeaturesProvider extends ProductivityFeaturesProvider
   public GroupDescriptor[] getGroupDescriptors()
   {
     return new GroupDescriptor[] {
-      new GroupDescriptor(CLOUDS_GROUP_ID, CloudBundle.getText("group.display.name"))
+      new GroupDescriptor(CLOUDS_GROUP_ID, "group.display.name")
     };
   }
 

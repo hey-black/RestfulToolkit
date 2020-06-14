@@ -37,20 +37,26 @@ intellij {
     // 这里是指打插件包的时候用idea什么版本的依赖包打
     // 比如这里用2019.3打包，如果你的插件实现源码里用了2019.3不存在的依赖包或类，就会报错
     // 一般就填当前IDEA的版本号即可
-    version "2019.3"
+    // version "2019.3"   // 2019.3
+    type = 'IU'           // 'IU' IntelliJ IDEA Ultimate Edition，默认值为 'IC' IntelliJ IDEA Community Edition
+    pluginName = 'WebDevelopmentToolkit'   // 插件名
+    //localPath = '/Users/aborn/software/ideaIC-2020.1' // IC 版本 2020.1
+    localPath = '/Applications/IntelliJ IDEA.app'   // 本地的 ieda路径 (与version属性互斥)，这个为2020.1版本
+    //localPath = '/Applications/IntelliJ IDEA 2.app'   // 2019.3版本
+    //downloadSources = false
     plugins = ['java', 'Kotlin']
 }
 
-patchPluginXml {
+//patchPluginXml {
 
     //changeNotes里的内容展示位置参考图14
-    changeNotes """
-      1.0版本.
+    //changeNotes """
+    //  1.0版本.
 
-      第1.0版本：初始化这个测试插件项目"""
+    //  第1.0版本：初始化这个测试插件项目"""
 
     // 这个意思是说当前定义的这个插件最早支持到什么版本的IDEA
     // 这里配置sinceBuild=191，表示插件只能被版本号大于等于2019.1版本的IDEA安装，低于这个版本的将抛无法兼容的错误
     // ↑上方参考这篇问答：https://intellij-support.jetbrains.com/hc/en-us/community/posts/360003338799-Build-compatible-plugin
-    sinceBuild "192.5728.98"   // 原 191
-}
+    // sinceBuild "192.5728.98"   // 原 191
+//}
