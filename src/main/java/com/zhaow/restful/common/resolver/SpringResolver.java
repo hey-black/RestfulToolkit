@@ -66,16 +66,9 @@ public class SpringResolver extends BaseServiceResolver {
                 continue;
             }
 
-            String classUriPath = JaxrsAnnotationHelper.getClassUriPath(psiClass);
+            List<RestServiceItem> restServiceItems = Convertor.getServiceItemList(psiClass);
 
-            for (PsiMethod psiMethod : psiMethods) {
-                RequestPath[] methodUriPaths = JaxrsAnnotationHelper.getRequestPaths(psiMethod);
-
-                for (RequestPath methodUriPath : methodUriPaths) {
-                    RestServiceItem item = createRestServiceItem(psiMethod, classUriPath, methodUriPath);
-                    itemList.add(item);
-                }
-            }
+            itemList.addAll(restServiceItems);
 
         }
 

@@ -36,19 +36,18 @@ public class ServiceHelper {
     public static List<RestServiceProject> buildRestServiceProjectListUsingResolver(Project project, AnActionEvent anActionEvent, Disposable disposable) {
         List<RestServiceProject> serviceProjectList = new ArrayList<>();
         Module[] modules = ModuleManager.getInstance(project).getModules();
-        List<RestServiceItem> restServices;
 
         if (modules.length > 1) {
             for (Module module : modules) {
-                List<RestServiceItem> moduleList = buildRestServiceItemListUsingResolver(project, module, anActionEvent);
-                if (moduleList.size() > 0) {
-                    serviceProjectList.add(new RestServiceProject(module.getName() + "(" + moduleList.size() +")", moduleList));
+                List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(project, module, anActionEvent);
+                if (restServices.size() > 0) {
+                    serviceProjectList.add(new RestServiceProject(module.getName() + "(" + restServices.size() +")", restServices));
                 }
             }
         } else {
-            restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
+            List<RestServiceItem> restServices = buildRestServiceItemListUsingResolver(project, anActionEvent);
             if (restServices.size() > 0) {
-                serviceProjectList.add(new RestServiceProject(project.getName(), restServices));
+                serviceProjectList.add(new RestServiceProject(project.getName() + "(" + restServices.size() +")", restServices));
             }
         }
 
