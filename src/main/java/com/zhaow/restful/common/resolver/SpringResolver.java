@@ -27,16 +27,6 @@ public class SpringResolver extends BaseServiceResolver {
 
     PropertiesHandler propertiesHandler;
 
-    public SpringResolver(Module module) {
-        myModule = module;
-        propertiesHandler = new PropertiesHandler(module);
-    }
-
-    public SpringResolver(Project project) {
-        myProject = project;
-
-    }
-
     public SpringResolver(Project project, AnActionEvent anAction) {
         myProject = project;
         anActionEvent = anAction;
@@ -44,7 +34,10 @@ public class SpringResolver extends BaseServiceResolver {
     }
 
     public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
-        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(SpringControllerAnnotation.REST_CONTROLLER.getShortName(), project, GlobalSearchScope.moduleScope(module));
+        Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
+        for (SpringControllerAnnotation annotation : SpringControllerAnnotation.values()) {
+            psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annotation.getShortName(), project, GlobalSearchScope.moduleScope(module)));
+        }
         return buildRestServiceItemList(psiAnnotations);
     }
 
@@ -66,7 +59,7 @@ public class SpringResolver extends BaseServiceResolver {
                 continue;
             }
 
-            List<RestServiceItem> restServiceItems = Convertor.getServiceItemList(psiClass);
+            List<RestServiceItem> restServiceItems = getServiceItemList(psiClass);
 
             itemList.addAll(restServiceItems);
 
@@ -187,103 +180,6 @@ public class SpringResolver extends BaseServiceResolver {
         }
         return requestPaths;
     }
-
-   /* private List<RequestPath> getRequestMappings(String defaultPath, KtAnnotationEntry entry) {
-        List<RequestPath> requestPaths = new ArrayList<>();
-        List<String> methodList = new ArrayList<>();
-        List<String> pathList = new ArrayList<>();
-
-        String annotationName = entry.getCalleeExpression().getText();
-        SpringRequestMethodAnnotation requestMethodAnnotation = SpringRequestMethodAnnotation.getByShortName(annotationName);
-        if (requestMethodAnnotation == null) {
-            return new ArrayList<>();
-        }
-
-        if (requestMethodAnnotation.methodName() != null) {
-            methodList.add(requestMethodAnnotation.methodName());
-        } else {
-            // 下面循环获取
-        }
-
-        //注解参数值
-        KtValueArgumentList valueArgumentList = entry.getValueArgumentList();
-        // 只有注解，没有参数
-        if (valueArgumentList != null) {
-            List<KtValueArgument> arguments = valueArgumentList.getArguments();
-
-
-            for (int i = 0; i < arguments.size(); i++) {
-                KtValueArgument ktValueArgument = arguments.get(i);
-                KtValueArgumentName argumentName = ktValueArgument.getArgumentName();
-
-                KtExpression argumentExpression = ktValueArgument.getArgumentExpression();
-                if (argumentName == null || argumentName.getText().equals("value") || argumentName.getText().equals("path")) {
-                    // array, kotlin 1.1-
-                    if (argumentExpression.getText().startsWith("arrayOf")) {
-                        List<KtValueArgument> pathValueArguments = ((KtCallExpression) argumentExpression).getValueArguments();
-                        for (KtValueArgument pathValueArgument : pathValueArguments) {
-                            pathList.add(pathValueArgument.getText().replace("\"", ""));
-                        }
-                        // array, kotlin 1.2+
-                    } else if (argumentExpression.getText().startsWith("[")) {
-                        List<KtExpression> innerExpressions = ((KtCollectionLiteralExpression) argumentExpression).getInnerExpressions();
-                        for (KtExpression ktExpression : innerExpressions) {
-                            pathList.add(ktExpression.getText().replace("\"", ""));
-                        }
-                    } else {
-                        // 有且仅有一个value
-                        PsiElement[] paths = ktValueArgument.getArgumentExpression().getChildren();
-//                            Arrays.stream(paths).forEach(p -> pathList.add(p.getText()));
-                        pathList.add(paths.length==0? "" : paths[0].getText());
-                    }
-                    //TODO
-                    continue;
-                }
-
-                String attribute = "method";
-                if (argumentName.getText().equals(attribute)) {
-
-                    // array, kotlin 1.1-
-                    if (argumentExpression.getText().startsWith("arrayOf")) {
-                        List<KtValueArgument> pathValueArguments = ((KtCallExpression) argumentExpression).getValueArguments();
-                        for (KtValueArgument pathValueArgument : pathValueArguments) {
-                            methodList.add(pathValueArgument.getText().replace("\"", ""));
-                        }
-                        // array, kotlin 1.2+
-                    } else if (argumentExpression.getText().startsWith("[")) {
-                        List<KtExpression> innerExpressions = ((KtCollectionLiteralExpression) argumentExpression).getInnerExpressions();
-                        for (KtExpression ktExpression : innerExpressions) {
-                            methodList.add(ktExpression.getText().replace("\"", ""));
-                        }
-                    } else {
-                        // 有且仅有一个value
-                        PsiElement[] paths = ktValueArgument.getArgumentExpression().getChildren();
-//                            Arrays.stream(paths).forEach(p -> methodList.add(p.getText()));
-                        methodList.add(paths.length==0? "" : paths[0].getText());
-                    }
-
-                }
-            }
-        } else {
-            pathList.add(defaultPath);
-            //method = "GET";
-        }
-
-        if (methodList.size() > 0) {
-            for (String method : methodList) {
-                for (String path : pathList) {
-                    requestPaths.add(new RequestPath(path, method));
-                }
-            }
-        } else {
-            for (String path : pathList) {
-                requestPaths.add(new RequestPath(path, null));
-            }
-        }
-
-        return requestPaths;
-    }*/
-
 
     private List<RequestPath> getRequestMappings(String defaultPath, KtAnnotationEntry entry) {
         List<RequestPath> requestPaths = new ArrayList<>();
