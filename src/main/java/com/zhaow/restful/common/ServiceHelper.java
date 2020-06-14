@@ -5,6 +5,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiMethod;
+import com.intellij.psi.search.GlobalSearchScope;
 import com.zhaow.restful.common.resolver.JaxrsResolver;
 import com.zhaow.restful.common.resolver.ServiceResolver;
 import com.zhaow.restful.common.resolver.SpringResolver;
@@ -43,12 +44,18 @@ public class ServiceHelper {
         SpringResolver springResolver = new SpringResolver(project, anAction);
         JaxrsResolver jaxrsResolver = new JaxrsResolver(project, anAction);
 
-        ServiceResolver[] resolvers = {springResolver, jaxrsResolver};
-        for (ServiceResolver resolver : resolvers) {
-            List<RestServiceItem> allSupportedServiceItemsInProject = resolver.findAllSupportedServiceItemsInProject();
+        //ServiceResolver[] resolvers = {springResolver, jaxrsResolver};
 
-            itemList.addAll(allSupportedServiceItemsInProject);
-        }
+        List<RestServiceItem> javaxPathList = jaxrsResolver.getRestServiceItemList(project, GlobalSearchScope.allScope(project));
+        itemList.addAll(javaxPathList);
+        List<RestServiceItem> springList = springResolver.findAllSupportedServiceItemsInProject();
+        itemList.addAll(springList);
+
+//        for (ServiceResolver resolver : resolvers) {
+//            List<RestServiceItem> allSupportedServiceItemsInProject = resolver.findAllSupportedServiceItemsInProject();
+//
+//            itemList.addAll(allSupportedServiceItemsInProject);
+//        }
 
         return itemList;
     }

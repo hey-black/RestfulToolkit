@@ -8,7 +8,7 @@ group 'com.zhaow.restful.toolkit'
 version '3.0.0' //定义jar包/zip包的版本号
 ext.kotlin_version = '1.3.72'
 
-sourceCompatibility = 1.8 //限制jdk的使用版本号，这里限制到8，表示生成的idea插件只能运行在jdk8以上的环境中
+sourceCompatibility = 1.8 // 限制jdk的使用版本号，这里限制到8，表示生成的idea插件只能运行在jdk8以上的环境中
 
 repositories {
     maven {
@@ -39,7 +39,7 @@ intellij {
     // 一般就填当前IDEA的版本号即可
     // version "2019.3"   // 2019.3
     type = 'IU'           // 'IU' IntelliJ IDEA Ultimate Edition，默认值为 'IC' IntelliJ IDEA Community Edition
-    pluginName = 'WebDevelopmentToolkit'   // 插件名
+    pluginName = 'WebDT'   // 插件名，Web Development Toolkit
     //localPath = '/Users/aborn/software/ideaIC-2020.1' // IC 版本 2020.1
     localPath = '/Applications/IntelliJ IDEA.app'   // 本地的 ieda路径 (与version属性互斥)，这个为2020.1版本
     //localPath = '/Applications/IntelliJ IDEA 2.app'   // 2019.3版本
