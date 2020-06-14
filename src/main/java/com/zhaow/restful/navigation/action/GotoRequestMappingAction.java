@@ -7,6 +7,7 @@ import com.intellij.navigation.ChooseByNameContributor;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataKeys;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.ide.CopyPasteManager;
 import com.intellij.openapi.project.DumbAware;
@@ -36,7 +37,7 @@ public class GotoRequestMappingAction extends GotoActionBase implements DumbAwar
         FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.popup.service");
 
         ChooseByNameContributor[] chooseByNameContributors = {
-                new GotoRequestMappingContributor(e.getData(DataKeys.MODULE))/*,
+                new GotoRequestMappingContributor(e.getData(LangDataKeys.MODULE))/*,
                 new RequestMappingContributor()*/
         };
 
@@ -68,8 +69,7 @@ public class GotoRequestMappingAction extends GotoActionBase implements DumbAwar
 
     }
 
-// TODO IDEA 2018 删了？
-//    @Override
+    @Override
     protected <T> void showNavigationPopup(AnActionEvent e,
                                            ChooseByNameModel model,
                                            final GotoActionCallback<T> callback,
