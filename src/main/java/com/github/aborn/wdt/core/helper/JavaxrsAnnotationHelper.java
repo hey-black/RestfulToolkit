@@ -28,23 +28,17 @@ public class JavaxrsAnnotationHelper implements AnnotationHelper {
     @Override
     public RequestPath[] getRequestPaths(PsiMethod psiMethod) {
         PsiAnnotation[] annotations = psiMethod.getModifierList().getAnnotations();
-        if(annotations == null) return null;
+        if (annotations == null) {
+            return null;
+        }
+
         List<RequestPath> list = new ArrayList<>();
 
         PsiAnnotation wsPathAnnotation = psiMethod.getModifierList().findAnnotation(JaxrsPathAnnotation.PATH.getQualifiedName());
         String path = wsPathAnnotation == null ? psiMethod.getName() : getWsPathValue(wsPathAnnotation);
-
         JaxrsHttpMethodAnnotation[] jaxrsHttpMethodAnnotations = JaxrsHttpMethodAnnotation.values();
 
-        /*for (PsiAnnotation annotation : annotations) {
-            for (JaxrsHttpMethodAnnotation methodAnnotation : jaxrsHttpMethodAnnotations) {
-                if (annotation.getQualifiedName().equals(methodAnnotation.getQualifiedName())) {
-                    list.add(new RequestPath(path, methodAnnotation.getShortName()));
-                }
-            }
-        }*/
-
-        Arrays.stream(annotations).forEach(a-> Arrays.stream(jaxrsHttpMethodAnnotations).forEach(methodAnnotation-> {
+        Arrays.stream(annotations).forEach(a -> Arrays.stream(jaxrsHttpMethodAnnotations).forEach(methodAnnotation -> {
             if (a.getQualifiedName().equals(methodAnnotation.getQualifiedName())) {
                 list.add(new RequestPath(path, methodAnnotation.getShortName()));
             }
