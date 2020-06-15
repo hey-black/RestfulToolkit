@@ -25,10 +25,19 @@ public class JavaxrsResolver extends BaseResolver {
     }
 
     @Override
+    public List<RestServiceItem> getRestServiceItemList(Project project) {
+        Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(JaxrsPathAnnotation.PATH.getShortName(), project, GlobalSearchScope.projectScope(project));
+        return build(psiAnnotations, null);
+    }
+
+    @Override
     public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
         Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(JaxrsPathAnnotation.PATH.getShortName(), project, GlobalSearchScope.moduleScope(module));
-        List<RestServiceItem> itemList = Lists.newArrayList();
+        return build(psiAnnotations, module);
+    }
 
+    private List<RestServiceItem> build(Collection<PsiAnnotation> psiAnnotations, Module module) {
+        List<RestServiceItem> itemList = Lists.newArrayList();
         psiAnnotations.forEach(psiAnnotation -> {
             PsiModifierList psiModifierList = (PsiModifierList) psiAnnotation.getParent();
             PsiElement psiElement = psiModifierList.getParent();
@@ -46,7 +55,9 @@ public class JavaxrsResolver extends BaseResolver {
 
                 for (RequestPath methodUriPath : methodUriPaths) {
                     RestServiceItem item = buildRestServiceItem(psiMethod, classUriPath, methodUriPath);
-                    item.setModule(module);
+                    if (module != null) {
+                        item.setModule(module);
+                    }
                     itemList.add(item);
                 }
             }

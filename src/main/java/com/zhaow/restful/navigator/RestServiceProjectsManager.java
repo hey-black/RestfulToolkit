@@ -65,7 +65,7 @@ public class RestServiceProjectsManager implements PersistentStateComponent<Rest
     public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
         return DumbService.getInstance(myProject).runReadActionInSmartMode(() ->
                 //ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent, this)
-                RestServiceDataManager.buildRestServiceData(myProject, anActionEvent)
+                RestServiceDataManager.buildRestServiceData(myProject)
         );
     }
 

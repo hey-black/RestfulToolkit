@@ -27,11 +27,24 @@ public class SpringResolver extends BaseResolver {
     }
 
     @Override
+    public List<RestServiceItem> getRestServiceItemList(Project project) {
+        Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
+        for (SpringControllerAnnotation annotation : SpringControllerAnnotation.values()) {
+            psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annotation.getShortName(), project, GlobalSearchScope.projectScope(project)));
+        }
+        return build(psiAnnotations, null);
+    }
+
+    @Override
     public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
         Collection<PsiAnnotation> psiAnnotations = new ArrayList<>();
         for (SpringControllerAnnotation annotation : SpringControllerAnnotation.values()) {
             psiAnnotations.addAll(JavaAnnotationIndex.getInstance().get(annotation.getShortName(), project, GlobalSearchScope.moduleScope(module)));
         }
+        return build(psiAnnotations, module);
+    }
+
+    private List<RestServiceItem> build(Collection<PsiAnnotation> psiAnnotations, Module module) {
 
         List<RestServiceItem> itemList = Lists.newArrayList();
 
@@ -77,7 +90,9 @@ public class SpringResolver extends BaseResolver {
                     String path = classRequestPath.getPath();
 
                     RestServiceItem item = buildRestServiceItem(psiMethod, path, methodRequestPath);
-                    item.setModule(module);
+                    if (module != null) {
+                        item.setModule(module);
+                    }
                     itemList.add(item);
                 }
             }

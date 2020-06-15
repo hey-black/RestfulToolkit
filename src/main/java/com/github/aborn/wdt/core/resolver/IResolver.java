@@ -11,5 +11,18 @@ import java.util.List;
  * @date 2020/06/15 11:26 AM
  */
 public interface IResolver {
+    /**
+     * build data from module in project
+     * @param project
+     * @param module
+     * @return
+     */
     List<RestServiceItem> getRestServiceItemList(Project project, Module module);
+
+    /**
+     * build data from all project
+     * @param project
+     * @return
+     */
+    List<RestServiceItem> getRestServiceItemList(Project project);
 }
