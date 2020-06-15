@@ -33,6 +33,7 @@ public class JaxrsResolver extends BaseServiceResolver {
         return buildRestServiceItemList(psiAnnotations);
     }
 
+    @Override
     public List<RestServiceItem> getRestServiceItemList(Project project, Module module) {
         Collection<PsiAnnotation> psiAnnotations = JavaAnnotationIndex.getInstance().get(JaxrsPathAnnotation.PATH.getShortName(), project, GlobalSearchScope.moduleScope(module));
         return buildRestServiceItemList(psiAnnotations);

@@ -1,6 +1,7 @@
 package com.zhaow.restful.common.resolver;
 
 
+import com.github.aborn.wdt.utils.FileUtils;
 import com.intellij.ide.IdeView;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.LangDataKeys;
@@ -10,7 +11,6 @@ import com.intellij.psi.PsiClass;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.GlobalSearchScope;
-import com.github.aborn.wdt.utils.FileUtils;
 import com.zhaow.restful.method.RequestPath;
 import com.zhaow.restful.navigation.action.RestServiceItem;
 import org.jetbrains.annotations.NotNull;

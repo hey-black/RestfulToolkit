@@ -15,6 +15,7 @@
  */
 package com.zhaow.restful.navigator;
 
+import com.github.aborn.wdt.core.RestServiceDataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -63,7 +64,9 @@ public class RestServiceProjectsManager implements PersistentStateComponent<Rest
 
     public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
         return DumbService.getInstance(myProject).runReadActionInSmartMode(() ->
-                ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent, this));
+                //ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent, this)
+                RestServiceDataManager.buildRestServiceData(myProject, anActionEvent)
+        );
     }
 
 

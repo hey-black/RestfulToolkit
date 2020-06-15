@@ -37,11 +37,11 @@ intellij {
     // 这里是指打插件包的时候用idea什么版本的依赖包打
     // 比如这里用2019.3打包，如果你的插件实现源码里用了2019.3不存在的依赖包或类，就会报错
     // 一般就填当前IDEA的版本号即可
-    // version "2019.3"   // 2019.3
-    type = 'IU'           // 'IU' IntelliJ IDEA Ultimate Edition，默认值为 'IC' IntelliJ IDEA Community Edition
+    version "2019.3"   // 2019.3
+    type = 'IC'           // 'IU' IntelliJ IDEA Ultimate Edition，默认值为 'IC' IntelliJ IDEA Community Edition
     pluginName = 'WebDT'   // 插件名，Web Development Toolkit
     //localPath = '/Users/aborn/software/ideaIC-2020.1' // IC 版本 2020.1
-    localPath = '/Applications/IntelliJ IDEA.app'   // 本地的 ieda路径 (与version属性互斥)，这个为2020.1版本
+    //localPath = '/Applications/IntelliJ IDEA.app'   // 本地的 ieda路径 (与version属性互斥)，这个为2020.1版本
     //localPath = '/Applications/IntelliJ IDEA 2.app'   // 2019.3版本
     //downloadSources = false
     plugins = ['java', 'Kotlin']
