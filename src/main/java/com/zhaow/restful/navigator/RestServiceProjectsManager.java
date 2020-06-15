@@ -19,13 +19,11 @@ import com.github.aborn.wdt.core.RestServiceDataManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.components.AbstractProjectComponent;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ProjectComponent;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
-import com.zhaow.restful.common.ServiceHelper;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -64,7 +62,6 @@ public class RestServiceProjectsManager implements PersistentStateComponent<Rest
 
     public List<RestServiceProject> getServiceProjects(AnActionEvent anActionEvent) {
         return DumbService.getInstance(myProject).runReadActionInSmartMode(() ->
-                //ServiceHelper.buildRestServiceProjectListUsingResolver(myProject, anActionEvent, this)
                 RestServiceDataManager.buildRestServiceData(myProject)
         );
     }

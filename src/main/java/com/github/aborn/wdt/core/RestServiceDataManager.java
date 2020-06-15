@@ -7,7 +7,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
-import com.zhaow.restful.common.ServiceHelper;
 import com.zhaow.restful.navigation.action.RestServiceItem;
 import com.zhaow.restful.navigator.RestServiceProject;
 import org.apache.commons.compress.utils.Lists;
@@ -20,7 +19,7 @@ import java.util.List;
  */
 public class RestServiceDataManager {
 
-    public static final Logger LOG = Logger.getInstance(ServiceHelper.class);
+    public static final Logger LOG = Logger.getInstance(RestServiceDataManager.class);
 
     public static List<RestServiceProject> buildRestServiceData(Project project) {
         List<RestServiceProject> serviceProjectList = Lists.newArrayList();
